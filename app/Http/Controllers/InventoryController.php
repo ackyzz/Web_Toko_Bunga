@@ -12,11 +12,21 @@ class InventoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $user = Auth::user(); // Get the currently authenticated user
-        $inventory = Inventory::where('user_id', $user->id)->get(); // Fetch inventory data for the current user
-    
+        $user = Auth::user();
+
+        $search = $request->search;
+
+        $inventory = Inventory::where('user_id', $user->id)
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('nama_barang', 'like', '%' . $search . '%')
+                      ->orWhere('kategori', 'like', '%' . $search . '%');
+                });
+            })
+            ->get();
+
         return view('inventory.inventory', [
             'title' => 'Inventory',
             'inventory' => $inventory
@@ -65,7 +75,8 @@ class InventoryController extends Controller
      */
     public function edit(string $id)
     {
-        $selected = Inventory::findorfail($id);
+        $selected = Inventory::findOrFail($id);
+
         return view('inventory.edit-inventory', [
             'title' => 'Inventory | Edit Inventory',
             'selected' => $selected
@@ -73,7 +84,7 @@ class InventoryController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified resource.
      */
     public function update(Request $request, $id)
     {
@@ -98,8 +109,9 @@ class InventoryController extends Controller
      */
     public function destroy(string $id)
     {
-        $selected = Inventory::findorfail($id);
+        $selected = Inventory::findOrFail($id);
         $selected->delete();
+
         return back();
     }
 }

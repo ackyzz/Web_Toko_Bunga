@@ -14,6 +14,20 @@
                             <a href="{{ route('create-inventory') }}" class="btn-create"><i class="bi bi-plus-square"></i>
                                 Tambah Data</a>
                         </div>
+                        <form action="{{ route('inventory') }}" method="GET" class="mb-3">
+                            <div class="input-group">
+                                <input 
+                                    type="text"
+                                    name="search"
+                                    class="form-control"
+                                    placeholder="Cari nama barang atau kategori..."
+                                    value="{{ request('search') }}">
+                                
+                                <button class="btn btn-primary" type="submit">
+                                    Cari
+                                </button>
+                            </div>
+                        </form>
                         <div class="col-lg-12 mt-lg-0 d-flex align-items-stretch mx-auto" data-aos="fade-up"
                             data-aos-delay="200">
                             <table class="table table-striped">
